@@ -1,6 +1,7 @@
 var APIkey = "f3bc0a3c85231ad135e4beb406f8cdc7";
 let currentWeather = document.getElementById("currentWeather")
-let currentDate = moment().format('MMMM Do YYYY')
+// let currentDate = moment().format('MMMM Do YYYY')
+let currentDate = moment().format('L');
 let currentWeather2 = document.getElementById("currentWeather2")
 let currentWeather3 = document.getElementById("currentWeather3")
 let currentWeather4 = document.getElementById("currentWeather4")
@@ -10,21 +11,32 @@ let currentWeather6 = document.getElementById("currentWeather6")
 
 let userinput = document.getElementById("userinput");
 const submit = document.getElementById("submit");
-
+let shistory = document.getElementById("shistory")
 
 function grabText(event){
+  currentWeather.innerText = "";
+  currentWeather2.innerText = "";
+  currentWeather3.innerText = "";
+  currentWeather4.innerText = "";
+  currentWeather5.innerText = "";
+  currentWeather6.innerText = "";
   event.preventDefault(); 
-  // currentWeather.innerText = "";
-  // currentWeather2.innerText = ""; 
-  // currentWeather3.innerText = ""; 
-  // currentWeather4.innerText = ""; 
-  // currentWeather5.innerText = ""; 
-  // currentWeather6.innerText = "";  
   let city = userinput.value;
   getApi(city);
     localStorage.setItem("userinput", JSON.stringify(city));
-   
+    historical(city);  
 }
+
+ 
+
+function historical(city){
+  let list = document.createElement("button")
+  list.innerText = city
+  shistory.append(list);
+  list.addEventListener("click", grabText)
+  
+}
+
 
 
 function getApi(city) {
@@ -38,16 +50,25 @@ function getApi(city) {
 function displayWeather(data){
 console.log(data)
 let cityName = document.createElement("h1");
-let icon = data.weather[0].icon;
-cityName.innerText = data.name + " " + currentDate + icon;
+let visual = document.createElement("img");
+visual.innerHTML = "src"+ "=" + '"http://openweathermap.org/img/wn/' + data.weather[0].icon + '@2x.png"';
+cityName.innerText = data.name + " " + "(" + currentDate + ")";
 currentWeather.append(cityName);
 let currentTemp = document.createElement("h2")
 let fTemp = ((data.main.temp -273.15)*1.8)+32
-currentTemp.innerText = fTemp.toFixed(0) + "\xB0" + "F";
-
+currentTemp.innerText = "Temp: " + fTemp.toFixed(0) + "\xB0" + "F";
+let currentwind = document.createElement("h2");
+currentwind.innerText = "Wind: " + data.wind.speed + " MPH";
+let currenthumid = document.createElement("h2");
+currenthumid.innerText = "Humidity: " + data.main.humidity + " %";
+currentuv = document.createElement("h2");
+currentuv.innerText = "UV: " + data.main.uvi;
 
 currentWeather.append(currentTemp);
-
+currentWeather.append(visual);
+currentWeather.append(currentwind);
+currentWeather.append(currenthumid);
+currentWeather.append(currentuv);
 
 
 get5Day(data.coord.lat,data.coord.lon);
@@ -175,7 +196,7 @@ function display5Day(data){
           futureTemp.innerText = "Temp: " + convertTemp.toFixed(0) + "\xB0" + "F";
           let fwind = document.createElement("h2");
           fwind.innerText = "Wind: " + data.daily[4].wind_speed + " MPH";
-          let fhumid = "Humidity: " + document.createElement("h2");
+          let fhumid = document.createElement("h2");
           fhumid.innerText = "Humidity: " + data.daily[4].humidity + " %";
           currentWeather6.append(fdate);
           currentWeather6.append(futureTemp);
